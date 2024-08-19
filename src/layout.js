@@ -6,6 +6,8 @@ import BodyIndex from "./components/BodyIndex/bodyindex";
 import CalorieIndex from "./components/CalorieIndex/calorieIndex";
 import CalorieCalculation from "./components/CalorieCalculation/calorieCalculation";
 import Dashboard from "./components/Dashboard/dashboard";
+import Login from "./components/login/login";
+import Register from "./components/register/register";
 
 const Layout = () => {
   return (
@@ -18,6 +20,8 @@ const Layout = () => {
           <Route path="/CalorieCalculation" element={<CalorieCalculation />} />
           <Route path="/Dashboard" element={<Dashboard />} />
         </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </>
   );

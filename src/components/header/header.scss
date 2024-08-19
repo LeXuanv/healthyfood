@@ -8,6 +8,7 @@
         justify-content: space-between;
         max-width: 1440px;
         margin: auto;
+        padding: 0 10px;
         color: #fff;
         font-size: 20px;
         .logo-header{
@@ -45,6 +46,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 10px;
             .login{
                 display: flex;
                 text-decoration: none;

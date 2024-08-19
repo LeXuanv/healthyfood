@@ -62,7 +62,11 @@ const Header = () => {
             </Link>
           </div>
           <div className="user-login">
-            <Link to="" className="login">
+            <Link
+              to="/login"
+              className={`login`}
+              onClick={() => handlelinkClick("/login")}
+            >
               <UserOutlined />
               <p>Login</p>
             </Link>
