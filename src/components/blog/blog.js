@@ -7,23 +7,34 @@ const items = [
   {
     key: "1",
     icon: <MailOutlined />,
-    label: "Thực đơn theo bữa ăn",
+    label: "Tất cả danh mục",
     children: [
       {
         key: "11",
-        label: "Bữa sáng",
+        label: "Thực đơn theo mùa",
       },
       {
         key: "12",
-        label: "Bữa trưa",
+        label: "Thực đơn theo nhóm",
       },
       {
         key: "13",
-        label: "bữa tối",
+        label: "Thực đơn theo bữa",
+        children: [
+          { key: "131", label: "Bữa sáng" },
+          { key: "132", label: "Bữa trưa" },
+          { key: "133", label: "Bữa tối" },
+          { key: "134", label: "Bữa phụ" },
+        ],
       },
       {
         key: "14",
-        label: "Bữa phụ",
+        label: "Được yêu thích",
+      },
+      {
+        key: "15",
+        label: "Thực đơn thông dụng",
+        children: [{ key: "151", label: "Bữa sáng" }],
       },
     ],
   },
@@ -61,11 +72,9 @@ const getLevelKeys = (items1) => {
 const levelKeys = getLevelKeys(items);
 
 const Blog = () => {
-  const [stateOpenKeys, setStateOpenKeys] = useState(["1", "13"]);
+  const [stateOpenKeys, setStateOpenKeys] = useState(["1"]);
   const onOpenChange = (openKeys) => {
-    const currentOpenKey = openKeys.find(
-      (key) => stateOpenKeys.indexOf(key) === -1
-    );
+    const currentOpenKey = openKeys.find((key) => stateOpenKeys.indexOf(key));
     // open
     if (currentOpenKey !== undefined) {
       const repeatIndex = openKeys
@@ -73,9 +82,7 @@ const Blog = () => {
         .findIndex((key) => levelKeys[key] === levelKeys[currentOpenKey]);
       setStateOpenKeys(
         openKeys
-          // remove repeat key
           .filter((_, index) => index !== repeatIndex)
-          // remove current level all child
           .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey])
       );
     } else {

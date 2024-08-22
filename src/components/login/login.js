@@ -42,14 +42,20 @@ const Login = () => {
                 <h2>Đăng nhập</h2>
               </div>
               <Form.Item
-                label="Username"
-                name="username"
+                label="Email"
+                name="email"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your username!",
+                    message: "Please input your email!",
                   },
                 ]}
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
               >
                 <Input />
               </Form.Item>
@@ -63,6 +69,12 @@ const Login = () => {
                     message: "Please input your password!",
                   },
                 ]}
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
               >
                 <Input.Password />
               </Form.Item>
@@ -70,10 +82,10 @@ const Login = () => {
               <Form.Item
                 name="remember"
                 valuePropName="checked"
-                wrapperCol={{
-                  offset: 8,
-                  span: 16,
-                }}
+                // wrapperCol={{
+                //   offset: 4,
+                //   span: 16,
+                // }}
               >
                 <Checkbox>Remember me</Checkbox>
               </Form.Item>
@@ -85,7 +97,7 @@ const Login = () => {
                 }}
               >
                 <Button type="primary" htmlType="submit">
-                  Submit
+                  Đăng nhập
                 </Button>
               </Form.Item>
               <div className="login-google">

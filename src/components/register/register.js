@@ -1,123 +1,420 @@
 import Header from "../header/header";
 import "./register.scss";
-import React from "react";
-import { Button, Form, Input, DatePicker, Space } from "antd";
+import React, { useEffect, useState } from "react";
+import { Form, Input, DatePicker, Select, Button } from "antd";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const onFinish = (values) => {
-  console.log("Success:", values);
-};
-const onFinishFailed = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
-const onChange = (date, dateString) => {
-  console.log(date, dateString);
-};
 const Register = () => {
+  const [tinh, setTinh] = useState([]);
+  const [huyen, setHuyen] = useState([]);
+  const [xa, setXa] = useState([]);
+  const [selectedTinh, setSelectedTinh] = useState(null);
+  const [selectedHuyen, setSelectedHuyen] = useState(null);
+
+  const [cccd, setCccd] = useState("");
+  const [sdt, setSdt] = useState("");
+  const [email, setEmail] = useState("");
+  const [matKhau, setMatkhau] = useState("");
+  const [ngaySinh, setNgaysinh] = useState("");
+  const [gioiTinh, setGioiTinh] = useState("");
+  // const [pTinh, setPTinh] = useState("");
+  // const [pHuyen, setPHuyen] = useState("");
+  // const [pXa, setPXa] = useState("");
+  const [address, setAddress] = useState("");
+
+  console.log(cccd);
+
+  useEffect(() => {
+    axios
+      .get("https://esgoo.net/api-tinhthanh/1/0.htm")
+      .then((response) => {
+        // console.log(response.data.data);
+        setTinh(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu tỉnh:", error);
+      });
+  }, []);
+  // console.log(selectedTinh);
+  useEffect(() => {
+    if (selectedTinh) {
+      axios
+        .get(`https://esgoo.net/api-tinhthanh/2/${selectedTinh}.htm`)
+        .then((response) => {
+          // console.log("huyện", response.data.data);
+          setHuyen(response.data.data);
+        })
+        .catch((error) => {
+          console.error("Lỗi khi lấy dữ liệu huyện:", error);
+        });
+    }
+  }, [selectedTinh]);
+  useEffect(() => {
+    if (selectedHuyen) {
+      axios
+        .get(`https://esgoo.net/api-tinhthanh/3/${selectedHuyen}.htm`)
+        .then((response) => {
+          // console.log("xã", response.data.data);
+          setXa(response.data.data);
+        })
+        .catch((error) => {
+          console.error("Lỗi khi lấy dữ liệu huyện:", error);
+        });
+    }
+  }, [selectedHuyen]);
+  const validateEmail = (email) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
+
+  const handleClickRegister = async () => {
+    if (
+      !cccd ||
+      !sdt ||
+      !email ||
+      !matKhau ||
+      !ngaySinh ||
+      !gioiTinh ||
+      !address
+    ) {
+      toast.error("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+    const checkTypeEmail = validateEmail(email);
+    if (!checkTypeEmail) {
+      toast.error("Email không đúng định dạng!");
+      return;
+    }
+    try {
+      // const cccdCheck = await axios.get(
+      //   `https://66c714bf732bf1b79fa54389.mockapi.io/User?SoCCCD=${cccd}`
+      // );
+      // console.log("checkcccd", cccdCheck);
+      // const emailCheck = await axios.get(
+      //   `https://66c714bf732bf1b79fa54389.mockapi.io/User?email=${email}`
+      // );
+      // console.log("email", emailCheck);
+
+      // if (emailCheck.data.data.length > 0) {
+      //   toast.error("Email đã tồn tại!");
+      //   return;
+      // }
+      const response = await axios.post(
+        "https://66c714bf732bf1b79fa54389.mockapi.io/User",
+        {
+          SoCCCD: cccd,
+          sdt: sdt,
+          email: email,
+          password: matKhau,
+          date: ngaySinh,
+          genner: gioiTinh,
+          tinh: "",
+          huyen: "",
+          xa: "",
+          address: address,
+        }
+      );
+      toast.success("Đăng ký thành công!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      console.log("oke", response);
+    } catch (error) {
+      console.error("loi", error);
+    }
+  };
   return (
     <>
       <div className="container">
         <Header />
-        <div className="d-login">
-          <div className="i-login">
-            <Form
-              name="basic"
-              labelCol={{
-                span: 8,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              style={
-                {
-                  // maxWidth: 600,
-                }
-              }
-              initialValues={{
-                remember: true,
-              }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
-            >
-              <div className="title-login">
+        <ToastContainer />
+        <form>
+          <div className="form-signup">
+            <div className="full-signup">
+              <div className="title-signup">
+                <p>Welcome!</p>
                 <h2>Đăng ký</h2>
               </div>
-              <Form.Item
-                label="Username"
-                name="username"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your username!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your password!",
-                  },
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your email!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="Ngày sinh"
-                name="date"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your date!",
-                  },
-                ]}
-              >
-                <Space direction="vertical">
-                  <DatePicker onChange={onChange} />
-                </Space>
-              </Form.Item>
-              <Form.Item
-                label="Địa chỉ"
-                name="address"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your address!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                wrapperCol={{
-                  offset: 8,
-                  span: 16,
-                }}
-              >
-                <Button type="primary" htmlType="submit">
-                  Đăng ký
-                </Button>
-              </Form.Item>
-            </Form>
+              <div className="full-type">
+                <div className="inner-type">
+                  <div className="type">
+                    <div>
+                      <Form.Item
+                        layout="cccd"
+                        label="Số CCCD"
+                        name="cccd"
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <Input
+                          onChange={(event) => setCccd(event.target.value)}
+                          placeholder="Nhập số căn cước công dân..."
+                        />
+                      </Form.Item>
+                    </div>
+                    <div>
+                      <Form.Item
+                        layout="phone-number"
+                        label="Số điện thoại"
+                        name="phone-number"
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <Input
+                          onChange={(event) => setSdt(event.target.value)}
+                          placeholder="Nhập số điện thoại..."
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className="type">
+                    <div>
+                      <Form.Item
+                        layout="email"
+                        label="Email"
+                        name="email"
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <Input
+                          onChange={(event) => setEmail(event.target.value)}
+                          placeholder="Nhập email..."
+                        />
+                      </Form.Item>
+                    </div>
+                    <div>
+                      <Form.Item
+                        layout="password"
+                        label="Mật khẩu"
+                        name="password"
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <Input
+                          onChange={(event) => setMatkhau(event.target.value)}
+                          placeholder="Nhập mật khẩu..."
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className="type">
+                    <div>
+                      <Form.Item
+                        layout="date"
+                        label="Ngày sinh"
+                        name="date"
+                        // rules={[
+                        //   {
+                        //     required: true,
+                        //   },
+                        // ]}
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <DatePicker
+                          onChange={(date, dateString) =>
+                            setNgaysinh(dateString)
+                          }
+                        />
+                      </Form.Item>
+                    </div>
+                    <div>
+                      <Form.Item
+                        layout="genner"
+                        label="Giới tính"
+                        name="genner"
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <Select onChange={(value) => setGioiTinh(value)}>
+                          <Select.Option value="nam">Nam</Select.Option>
+                          <Select.Option value="nu">Nữ</Select.Option>
+                          <Select.Option value="khac">Khác</Select.Option>
+                        </Select>
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className="type">
+                    <div>
+                      <Form.Item
+                        layout="tinh"
+                        label="Tỉnh/ Thành phố"
+                        name="tinh"
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <Select
+                          onChange={(value) => {
+                            setSelectedTinh(value);
+                          }}
+                        >
+                          {tinh.map((item) => (
+                            <Select.Option key={item.id} value={item.id}>
+                              {item.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </div>
+                    <div>
+                      <Form.Item
+                        layout="huyen"
+                        label="Quận/ Huyện"
+                        name="huyen"
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <Select
+                          onChange={(value) => {
+                            setSelectedHuyen(value);
+                          }}
+                        >
+                          {huyen.map((item) => (
+                            <Select.Option key={item.id} value={item.id}>
+                              {item.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className="type">
+                    <div>
+                      <Form.Item
+                        layout="xa"
+                        label="Phường/ Xã"
+                        name="xa"
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <Select>
+                          {xa.map((item) => (
+                            <Select.Option key={item.id} value={item.id}>
+                              {item.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </div>
+                    <div>
+                      <Form.Item
+                        layout="dcct"
+                        label="Địa chỉ cụ thể"
+                        name="dcct"
+                        labelCol={{
+                          span: 24,
+                        }}
+                        wrapperCol={{
+                          span: 24,
+                        }}
+                      >
+                        <Input
+                          onChange={(event) => setAddress(event.target.value)}
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className="btn-sign">
+                    <Button
+                      type="primary"
+                      // htmlType="submit"
+                      onClick={() => handleClickRegister()}
+                    >
+                      Đăng Ký
+                    </Button>
+                  </div>
+                  <div className="btn-lg">
+                    <span>Bạn đã có tài khoản?</span>
+                    <Link to="/login">Đăng nhập</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </>
   );

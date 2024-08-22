@@ -11,6 +11,15 @@
         .ant-form{
             .ant-form-item{
                 margin-bottom: 10px;
+                margin-bottom: 7px;
+                padding: 0 5px;
+        
+                .ant-form-item-label {
+                    padding: 0;
+                }
+                .ant-picker {
+                    width: 100%;
+                }
             }
             .title-login{
                 h2{
