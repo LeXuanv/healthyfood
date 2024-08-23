@@ -2,7 +2,7 @@ import Header from "../header/header";
 import "./register.scss";
 import React, { useEffect, useState } from "react";
 import { Form, Input, DatePicker, Select, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -20,12 +20,12 @@ const Register = () => {
   const [matKhau, setMatkhau] = useState("");
   const [ngaySinh, setNgaysinh] = useState("");
   const [gioiTinh, setGioiTinh] = useState("");
-  // const [pTinh, setPTinh] = useState("");
-  // const [pHuyen, setPHuyen] = useState("");
-  // const [pXa, setPXa] = useState("");
+  const [pTinh, setPTinh] = useState("");
+  const [pHuyen, setPHuyen] = useState("");
+  const [pXa, setPXa] = useState("");
   const [address, setAddress] = useState("");
 
-  console.log(cccd);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -42,7 +42,7 @@ const Register = () => {
   useEffect(() => {
     if (selectedTinh) {
       axios
-        .get(`https://esgoo.net/api-tinhthanh/2/${selectedTinh}.htm`)
+        .get(`https://esgoo.net/api-tinhthanh/2/${selectedTinh.key}.htm`)
         .then((response) => {
           // console.log("huyện", response.data.data);
           setHuyen(response.data.data);
@@ -55,7 +55,7 @@ const Register = () => {
   useEffect(() => {
     if (selectedHuyen) {
       axios
-        .get(`https://esgoo.net/api-tinhthanh/3/${selectedHuyen}.htm`)
+        .get(`https://esgoo.net/api-tinhthanh/3/${selectedHuyen.key}.htm`)
         .then((response) => {
           // console.log("xã", response.data.data);
           setXa(response.data.data);
@@ -72,7 +72,8 @@ const Register = () => {
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       );
   };
-
+  // console.log("tinh", pTinh);
+  // console.log("slt", selectedTinh);
   const handleClickRegister = async () => {
     if (
       !cccd ||
@@ -92,19 +93,6 @@ const Register = () => {
       return;
     }
     try {
-      // const cccdCheck = await axios.get(
-      //   `https://66c714bf732bf1b79fa54389.mockapi.io/User?SoCCCD=${cccd}`
-      // );
-      // console.log("checkcccd", cccdCheck);
-      // const emailCheck = await axios.get(
-      //   `https://66c714bf732bf1b79fa54389.mockapi.io/User?email=${email}`
-      // );
-      // console.log("email", emailCheck);
-
-      // if (emailCheck.data.data.length > 0) {
-      //   toast.error("Email đã tồn tại!");
-      //   return;
-      // }
       const response = await axios.post(
         "https://66c714bf732bf1b79fa54389.mockapi.io/User",
         {
@@ -114,9 +102,9 @@ const Register = () => {
           password: matKhau,
           date: ngaySinh,
           genner: gioiTinh,
-          tinh: "",
-          huyen: "",
-          xa: "",
+          tinh: pTinh,
+          huyen: pHuyen,
+          xa: pXa,
           address: address,
         }
       );
@@ -130,6 +118,7 @@ const Register = () => {
         progress: undefined,
         theme: "colored",
       });
+      navigate("/login");
       console.log("oke", response);
     } catch (error) {
       console.error("loi", error);
@@ -309,12 +298,13 @@ const Register = () => {
                         }}
                       >
                         <Select
-                          onChange={(value) => {
-                            setSelectedTinh(value);
+                          onChange={(value, key) => {
+                            setSelectedTinh(key);
+                            setPTinh(value);
                           }}
                         >
                           {tinh.map((item) => (
-                            <Select.Option key={item.id} value={item.id}>
+                            <Select.Option key={item.id} value={item.name}>
                               {item.name}
                             </Select.Option>
                           ))}
@@ -339,12 +329,13 @@ const Register = () => {
                         }}
                       >
                         <Select
-                          onChange={(value) => {
-                            setSelectedHuyen(value);
+                          onChange={(value, key) => {
+                            setSelectedHuyen(key);
+                            setPHuyen(value);
                           }}
                         >
                           {huyen.map((item) => (
-                            <Select.Option key={item.id} value={item.id}>
+                            <Select.Option key={item.id} value={item.name}>
                               {item.name}
                             </Select.Option>
                           ))}
@@ -370,9 +361,9 @@ const Register = () => {
                           span: 24,
                         }}
                       >
-                        <Select>
+                        <Select onChange={(value) => setPXa(value)}>
                           {xa.map((item) => (
-                            <Select.Option key={item.id} value={item.id}>
+                            <Select.Option key={item.id} value={item.name}>
                               {item.name}
                             </Select.Option>
                           ))}
