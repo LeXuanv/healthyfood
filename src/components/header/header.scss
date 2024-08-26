@@ -58,6 +58,16 @@
                     color: #fff;
                 }
             }
+            .logout{
+                padding: 5px 10px;
+                margin-left: 5px;
+                border-radius: 10px;
+                color: #4D544E;
+                &:hover{
+                    cursor: pointer;
+                    opacity: 0.8;
+                }
+            }
                 
         }
     }

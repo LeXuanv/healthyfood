@@ -1,12 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./header.scss";
 import { UserOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [activeLink, setActiveLink] = useState("/");
   const handlelinkClick = (path) => {
     setActiveLink(path);
+  };
+  const token = localStorage.getItem("authToken");
+  const userString = localStorage.getItem("user");
+  const user = JSON.parse(userString);
+  console.log(user);
+  const logout = () => {
+    localStorage.removeItem("authToken");
+    navigate("/login");
   };
   return (
     <>
@@ -62,14 +71,30 @@ const Header = () => {
             </Link>
           </div>
           <div className="user-login">
-            <Link
-              to="/login"
-              className={`login`}
-              onClick={() => handlelinkClick("/login")}
-            >
-              <UserOutlined />
-              <p>Login</p>
-            </Link>
+            {!token ? (
+              <Link
+                to="/login"
+                className={`login`}
+                onClick={() => handlelinkClick("/login")}
+              >
+                <UserOutlined />
+                <p>Login</p>
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/Profile"
+                  className={`login`}
+                  onClick={() => handlelinkClick("/Profile")}
+                >
+                  <UserOutlined />
+                  <p>Wellcome,{user.email}</p>
+                </Link>
+                <button className="logout" onClick={() => logout()}>
+                  Đăng xuất
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -1,9 +1,11 @@
 import Header from "../header/header";
 import "./login.scss";
-import React from "react";
+import React, { useState } from "react";
 import { Button, Checkbox, Form, Input } from "antd";
 import { GooglePlusOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 const onFinish = (values) => {
   console.log("Success:", values);
 };
@@ -12,6 +14,48 @@ const onFinishFailed = (errorInfo) => {
 };
 
 const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  const apiLogin = async () => {
+    try {
+      const response = await axios.get(
+        "https://66c714bf732bf1b79fa54389.mockapi.io/User"
+      );
+      const users = response.data;
+      console.log(users);
+
+      const user = users.find(
+        (user) => user.email === username && user.password === password
+      );
+
+      if (user && user.token) {
+        localStorage.setItem("authToken", user.token);
+        localStorage.setItem("user", JSON.stringify(user));
+        toast.success("Đăng nhập thành công!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+        navigate("/");
+        return true;
+      } else {
+        console.log("Đăng nhập thất bại:", user);
+        return false;
+      }
+    } catch (error) {
+      console.error("Lỗi khi đăng nhập:", error);
+      return false;
+    }
+  };
+
   return (
     <>
       <div className="container">
@@ -57,7 +101,7 @@ const Login = () => {
                   span: 24,
                 }}
               >
-                <Input />
+                <Input onChange={(e) => setUsername(e.target.value)} />
               </Form.Item>
 
               <Form.Item
@@ -76,7 +120,7 @@ const Login = () => {
                   span: 24,
                 }}
               >
-                <Input.Password />
+                <Input.Password onChange={(e) => setPassword(e.target.value)} />
               </Form.Item>
 
               <Form.Item
@@ -96,7 +140,11 @@ const Login = () => {
                   span: 16,
                 }}
               >
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  onClick={() => apiLogin()}
+                >
                   Đăng nhập
                 </Button>
               </Form.Item>

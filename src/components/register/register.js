@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { v4 as uuidv4 } from "uuid";
 
 const Register = () => {
   const [tinh, setTinh] = useState([]);
@@ -24,6 +25,8 @@ const Register = () => {
   const [pHuyen, setPHuyen] = useState("");
   const [pXa, setPXa] = useState("");
   const [address, setAddress] = useState("");
+
+  const token = uuidv4();
 
   const navigate = useNavigate();
 
@@ -106,6 +109,7 @@ const Register = () => {
           huyen: pHuyen,
           xa: pXa,
           address: address,
+          token: token,
         }
       );
       toast.success("Đăng ký thành công!", {
